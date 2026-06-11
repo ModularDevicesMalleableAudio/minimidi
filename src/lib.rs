@@ -72,10 +72,17 @@ fn parse_cards_content(raw: &str) -> Vec<(i32, String)> {
     cards
 }
 
-/// Thin I/O wrapper around the pure parser.
+/// Thin I/O wrapper around the pure parser. A missing /proc/asound/cards
+/// (host without ALSA: minimal containers, CI runners) means "zero cards",
+/// not an error — so find_card() reports the card as not found instead of
+/// leaking a FileNotFoundError about an internal path. Other I/O errors
+/// still propagate.
 fn parse_cards() -> std::io::Result<Vec<(i32, String)>> {
-    let raw = std::fs::read_to_string("/proc/asound/cards")?;
-    Ok(parse_cards_content(&raw))
+    match std::fs::read_to_string("/proc/asound/cards") {
+        Ok(raw) => Ok(parse_cards_content(&raw)),
+        Err(e) if e.kind() == std::io::ErrorKind::NotFound => Ok(Vec::new()),
+        Err(e) => Err(e),
+    }
 }
 
 #[pyfunction]

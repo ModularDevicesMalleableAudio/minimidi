@@ -44,22 +44,7 @@ jobs:
       - run: uv run mypy
       - run: uv run pytest tests -x
 
-  integration:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Load snd-virmidi
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y alsa-utils "linux-modules-extra-$(uname -r)"
-          sudo modprobe snd-virmidi midi_devs=2
-          # Fail loudly (don't let pytest skip silently) if the card is absent.
-          grep VirMIDI /proc/asound/cards
-      - name: Make raw MIDI devices writable by the runner user
-        run: sudo chmod a+rw /dev/snd/midiC*D*
-      - uses: dtolnay/rust-toolchain@stable
-      - uses: Swatinem/rust-cache@v2
-      - uses: astral-sh/setup-uv@v6
-      - run: uv sync --all-groups
-      - run: uv run maturin develop --release
-      - run: uv run pytest tests/integration -x
+  # No integration job: GitHub's hosted runners use Azure kernels whose
+  # linux-modules-extra package does not ship sound modules (snd-virmidi),
+  # so the VirMIDI round-trip can never run here. Integration tests run
+  # locally / on real hardware via scripts/test.sh with snd-virmidi loaded.

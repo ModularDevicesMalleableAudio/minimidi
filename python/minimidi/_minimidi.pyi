@@ -95,7 +95,7 @@ def list_cards() -> list[tuple[int, str]]:
     Return all ALSA cards as ``(card_number, card_id)`` tuples.
 
     Parses /proc/asound/cards. Returns an empty list if no cards are
-    registered (very rare on any system with audio hardware).
+    registered or the host has no ALSA at all (no /proc/asound/cards).
     """
 
 def find_card(card_id: str) -> int:
