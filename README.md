@@ -19,17 +19,19 @@ See [`AGENTS.md`](./AGENTS.md) for developer / agent workflow instructions.
 
 ## Install
 
-Not yet on PyPI (coming with v0.1.0). Until then, install straight from git
-— needs Rust stable on the machine, everything else is handled by the build:
+```bash
+pip install minimidi
+# or
+uv add minimidi
+```
+
+Prebuilt `abi3` wheels for x86_64 and aarch64 manylinux (Python ≥3.13) — no
+Rust toolchain or system packages needed. To install from source instead
+(needs Rust stable):
 
 ```bash
 pip install git+https://github.com/ModularDevicesMalleableAudio/minimidi
-# or
-uv add git+https://github.com/ModularDevicesMalleableAudio/minimidi
 ```
-
-Once published: `pip install minimidi` — prebuilt `abi3` wheels for
-x86_64 and aarch64 manylinux, no Rust toolchain needed.
 
 ## Quick start
 
