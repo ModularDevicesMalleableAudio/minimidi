@@ -1,5 +1,7 @@
 # minimidi
 
+[![CI](https://github.com/ModularDevicesMalleableAudio/minimidi/actions/workflows/ci.yml/badge.svg)](https://github.com/ModularDevicesMalleableAudio/minimidi/actions/workflows/ci.yml)
+
 Minimal Linux ALSA Raw MIDI **output**, written in Rust (PyO3), fully typed for Python 3.13+.
 
 `minimidi` does one thing: open an ALSA Raw MIDI device (`/dev/snd/midiC*D*`) write-only
@@ -17,13 +19,17 @@ See [`AGENTS.md`](./AGENTS.md) for developer / agent workflow instructions.
 
 ## Install
 
-Not yet published to PyPI. Build from source (needs Rust stable +
-[uv](https://docs.astral.sh/uv/)):
+Not yet on PyPI (coming with v0.1.0). Until then, install straight from git
+— needs Rust stable on the machine, everything else is handled by the build:
 
 ```bash
-uv sync --all-groups
-uv run maturin develop --release
+pip install git+https://github.com/ModularDevicesMalleableAudio/minimidi
+# or
+uv add git+https://github.com/ModularDevicesMalleableAudio/minimidi
 ```
+
+Once published: `pip install minimidi` — prebuilt `abi3` wheels for
+x86_64 and aarch64 manylinux, no Rust toolchain needed.
 
 ## Quick start
 
