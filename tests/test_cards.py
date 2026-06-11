@@ -47,7 +47,7 @@ def test_find_card_round_trips_listed_cards() -> None:
         assert minimidi.find_card(card_id) == num
 
 
-@requires_proc_asound
+# No guard: a host without ALSA behaves like a host with zero cards.
 def test_find_card_unknown_id_raises() -> None:
     with pytest.raises(minimidi.MinimidiError, match="no-such-card-xyz-12345"):
         minimidi.find_card("no-such-card-xyz-12345")
