@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  rust:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo fmt --check
+      - run: cargo clippy --all-targets -- -D warnings
+      - run: cargo test --release
+
+  python:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.13", "3.14"]
+        experimental: [false]
+        include:
+          # Advance warning if a future Python breaks PyO3 abi3; never
+          # blocks the build.
+          - python-version: "3.15"
+            experimental: true
+    continue-on-error: ${{ matrix.experimental }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - uses: astral-sh/setup-uv@v6
+      - run: uv python install ${{ matrix.python-version }}
+      - run: uv sync --all-groups --python ${{ matrix.python-version }}
+      - run: uv run maturin develop --release
+      - run: uv run ruff check
+      - run: uv run ruff format --check
+      - run: uv run mypy
+      - run: uv run pytest tests -x
+
+  integration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Load snd-virmidi
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y alsa-utils "linux-modules-extra-$(uname -r)"
+          sudo modprobe snd-virmidi midi_devs=2
+          # Fail loudly (don't let pytest skip silently) if the card is absent.
+          grep VirMIDI /proc/asound/cards
+      - name: Make raw MIDI devices writable by the runner user
+        run: sudo chmod a+rw /dev/snd/midiC*D*
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync --all-groups
+      - run: uv run maturin develop --release
+      - run: uv run pytest tests/integration -x
