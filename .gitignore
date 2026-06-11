@@ -1,0 +1,28 @@
+# Rust / Cargo
+target/
+*.so
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+
+# Virtual envs (.venv plus scripts/test.sh --python venvs, e.g. .venv-py3.14)
+.venv*/
+
+# Build artefacts
+dist/
+build/
+*.egg-info/
+
+# uv
+.python-version-cache
+
+# Editors / OS
+.idea/
+.vscode/
+.DS_Store
+*.swp

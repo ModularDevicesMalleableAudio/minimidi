@@ -1,0 +1,59 @@
+[build-system]
+requires      = ["maturin>=1.7,<2.0"]
+build-backend = "maturin"
+
+[project]
+name            = "minimidi"
+version         = "0.1.0"
+description     = "Minimal Linux ALSA Raw MIDI output, with Python bindings via PyO3"
+requires-python = ">=3.13"
+readme          = "README.md"
+license         = { text = "MIT" }
+authors         = [{ name = "minimidi authors" }]
+keywords        = ["midi", "alsa", "linux", "rust", "pyo3"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Rust",
+    "Topic :: Multimedia :: Sound/Audio :: MIDI",
+    "Typing :: Typed",
+]
+
+[tool.maturin]
+python-source = "python"             # mixed Rust+Python project layout
+module-name   = "minimidi._minimidi"
+features      = ["pyo3/extension-module"]
+strip         = true
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "pytest-cases>=3.8",
+    "mypy>=1.11",
+    "ruff>=0.6",
+    "maturin>=1.7",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length    = 100
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "W", "UP", "RUF"]
+
+[tool.mypy]
+python_version         = "3.13"
+strict                 = true
+warn_unused_ignores    = true
+files                  = ["python/minimidi", "tests"]
+# Two conftest.py files (tests/, tests/integration/) must not collide, and
+# python/minimidi must map to module "minimidi" (not "python.minimidi").
+explicit_package_bases = true
+mypy_path              = ["python"]
