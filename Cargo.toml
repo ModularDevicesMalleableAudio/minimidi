@@ -1,0 +1,14 @@
+[package]
+name        = "minimidi"
+version     = "0.1.0"
+edition     = "2021"
+license     = "MIT"
+description = "Minimal Linux ALSA Raw MIDI output, with Python bindings via PyO3"
+readme      = "README.md"
+
+[lib]
+name       = "_minimidi"          # match #[pymodule] name in lib.rs
+crate-type = ["cdylib"]           # dynamic library for Python to load
+
+[dependencies]
+pyo3 = { version = "0.28", features = ["extension-module", "abi3-py313"] }
